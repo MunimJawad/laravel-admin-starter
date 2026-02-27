@@ -1,0 +1,48 @@
+Perfect — now that your container setup is persistent, adding models, controllers, or other Laravel files is straightforward and doesn’t require rebuilding containers. Here’s the workflow:
+
+1️⃣ Access the container shell (optional but recommended)
+docker-compose exec app sh
+
+This puts you inside the laravel-app container.
+
+You can run artisan commands directly inside the container.
+
+2️⃣ Use Artisan to generate models or controllers
+
+Generate a controller:
+
+php artisan make:controller PostController
+
+Generate a model (with migration if needed):
+
+php artisan make:model Post -m
+
+-m automatically creates a migration file for the model.
+
+Artisan will generate the files inside /var/www/html/app/Models and /var/www/html/app/Http/Controllers inside the container.
+
+Because your project folder is mounted as a volume, the files appear on your host machine automatically (F:\Laravel\Learning Topics).
+
+3️⃣ Run migrations if you created new models
+php artisan migrate
+
+Database changes persist in your MySQL container.
+
+4️⃣ Optional: Exit the container
+exit
+
+You can continue editing files on your host machine in VS Code or any editor.
+
+No container rebuild is needed.
+
+✅ Key Notes
+
+Never use docker-compose run app for generating files — it creates a temporary container. Use exec instead.
+
+All changes you make via Artisan inside the container directly update your project folder on Windows, thanks to volume mounting.
+
+For packages, always:
+
+docker-compose exec app composer require package/name
+
+Don’t rebuild containers; the existing container updates Composer packages.

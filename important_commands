@@ -1,0 +1,81 @@
+1️⃣ Start your project (first time or after shutdown)
+docker-compose up -d
+
+Starts existing containers.
+
+MySQL data and your project files are persisted thanks to Docker volumes.
+
+-d runs it in the background.
+
+2️⃣ Check running containers
+docker-compose ps
+
+You’ll see laravel-app and laravel-db.
+
+If laravel-app is not running, don’t worry — we can start it without rebuilding.
+
+3️⃣ Access your app container for commands
+
+Instead of docker-compose run (creates a new container), use exec, which works with your existing container:
+
+docker-compose exec app sh
+
+Now you’re inside the container.
+
+You can run commands like:
+
+php artisan migrate
+php artisan db:seed
+php artisan tinker
+composer require guzzlehttp/guzzle
+npm install
+npm run dev
+
+No new container is created — everything persists in the same container.
+
+4️⃣ Stop the project
+docker-compose stop
+
+Stops containers but doesn’t remove them.
+
+Fast startup next time.
+
+If you want to completely remove containers, then use:
+
+docker-compose down
+
+Only use this if you want to reset containers.
+
+5️⃣ Adding new packages
+
+Inside the container:
+
+docker-compose exec app sh
+composer require package/name
+
+Or run artisan commands after adding packages:
+
+php artisan vendor:publish
+php artisan migrate
+
+Your container is updated; no new container is needed.
+
+6️⃣ Running Laravel dev server efficiently
+
+Since you want memory efficiency:
+
+Option A: Keep the php artisan serve in the container only when needed:
+
+docker-compose exec app php artisan serve --host=0.0.0.0 --port=8001
+
+Option B: Use php-fpm + nginx if the project grows — more efficient than artisan serve.
+
+✅ Summary of “Important Commands”
+Action	Command
+Start project	docker-compose up -d
+Stop project	docker-compose stop
+Access container shell	docker-compose exec app sh
+Run artisan commands	php artisan ... (inside container)
+Add composer packages	composer require ... (inside container)
+View logs	docker-compose logs -f app
+Remove containers (rare)	docker-compose down
